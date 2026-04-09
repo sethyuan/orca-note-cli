@@ -1,0 +1,108 @@
+import 'dart:convert';
+
+class OrcaNoteOutputFormatter {
+  static String formatJson(Object? value) {
+    return const JsonEncoder.withIndent('  ').convert(value);
+  }
+
+  static String formatText(Object? value) {
+    final buffer = StringBuffer();
+    _writeValue(buffer, value, 0, null);
+    return buffer.toString().trimRight();
+  }
+
+  static void _writeValue(
+    StringBuffer buffer,
+    Object? value,
+    int indent,
+    String? label,
+  ) {
+    final prefix = ' ' * indent;
+    if (value is Map) {
+      final entries = value.entries
+          .where((entry) => entry.key != "success" && entry.key != "repoId")
+          .toList(growable: false);
+      if (entries.isEmpty) {
+        buffer.writeln(label == null ? '{}' : '$prefix$label: {}');
+        return;
+      }
+
+      if (label != null) {
+        buffer.writeln('$prefix$label:');
+      }
+
+      for (final entry in entries) {
+        final key = entry.key.toString();
+        final child = entry.value;
+        if (_isScalar(child)) {
+          buffer.writeln(
+            '${' ' * (label == null ? indent : indent + 2)}$key: ${_scalarToString(child)}',
+          );
+        } else {
+          _writeValue(buffer, child, label == null ? indent : indent + 2, key);
+        }
+      }
+      return;
+    }
+
+    if (value is List) {
+      if (value.isEmpty) {
+        buffer.writeln(label == null ? '[]' : '$prefix$label: []');
+        return;
+      }
+
+      if (label != null) {
+        buffer.writeln('$prefix$label:');
+      }
+
+      for (final item in value) {
+        final itemPrefix = ' ' * (label == null ? indent : indent + 2);
+        if (_isScalar(item)) {
+          buffer.writeln('$itemPrefix- ${_scalarToString(item)}');
+        } else if (item is Map) {
+          buffer.writeln('$itemPrefix-');
+          _writeValue(
+            buffer,
+            item,
+            (label == null ? indent : indent + 2) + 2,
+            null,
+          );
+        } else if (item is List) {
+          buffer.writeln('$itemPrefix-');
+          _writeValue(
+            buffer,
+            item,
+            (label == null ? indent : indent + 2) + 2,
+            null,
+          );
+        } else {
+          buffer.writeln('$itemPrefix- ${item.toString()}');
+        }
+      }
+      return;
+    }
+
+    final rendered = _scalarToString(value);
+    if (label == null) {
+      buffer.writeln(rendered);
+    } else {
+      buffer.writeln('$prefix$label: $rendered');
+    }
+  }
+
+  static bool _isScalar(Object? value) {
+    return value == null || value is String || value is num || value is bool;
+  }
+
+  static String _scalarToString(Object? value) {
+    if (value == null) {
+      return 'null';
+    }
+
+    if (value is String) {
+      return value.contains('\n') ? jsonEncode(value) : value;
+    }
+
+    return value.toString();
+  }
+}

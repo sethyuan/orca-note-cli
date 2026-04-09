@@ -1,0 +1,18 @@
+name: orca_note_cli
+description: A command-line interface for Orca Note.
+version: 1.0.0
+repository: https://github.com/sethyuan/orca-note-cli
+
+executables:
+  orcanote: orcanote
+
+environment:
+  sdk: ^3.11.3
+
+# Add regular dependencies here.
+dependencies:
+  args: ^2.7.0
+  mcp_dart: ^2.1.0
+
+dev_dependencies:
+  lints: ^6.0.0
