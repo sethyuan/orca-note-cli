@@ -41,12 +41,12 @@ OrcaToolCommand createGetBlocksTextCommand(OrcaNoteCommandContext context) {
         ToolExample(
           description: 'Read the full tree for one block.',
           command:
-              "orcanote get_blocks_text --repo=my-repo --input='{\"blockIds\":[12345]}'",
+              "orcanote get_blocks_text --repo my-repo --input '{\"blockIds\":[12345]}'",
         ),
         ToolExample(
           description: 'Read only a descendant slice for a block.',
           command:
-              "orcanote get_blocks_text --repo=my-repo --input='{\"blockIds\":[12345],\"childStartIndex\":1,\"childEndIndex\":20}' --json",
+              "orcanote get_blocks_text --repo my-repo --input '{\"blockIds\":[12345],\"childStartIndex\":1,\"childEndIndex\":20}' --json",
         ),
       ],
     ),

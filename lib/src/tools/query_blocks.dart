@@ -30,12 +30,12 @@ OrcaToolCommand createQueryBlocksCommand(OrcaNoteCommandContext context) {
         ToolExample(
           description: 'Search for blocks containing a text fragment.',
           command:
-              "orcanote query_blocks --repo=my-repo --input='{\"description\":{\"q\":{\"kind\":100,\"conditions\":[{\"kind\":8,\"text\":\"deadline\"}]}}}'",
+              "orcanote query_blocks --repo my-repo --input '{\"description\":{\"q\":{\"kind\":100,\"conditions\":[{\"kind\":8,\"text\":\"deadline\"}]}}}'",
         ),
         ToolExample(
           description: 'Find incomplete tasks and keep the raw JSON response.',
           command:
-              "orcanote query_blocks --repo=my-repo --input='{\"description\":{\"q\":{\"kind\":100,\"conditions\":[{\"kind\":11,\"completed\":false}]},\"page\":1,\"pageSize\":20}}' --json",
+              "orcanote query_blocks --repo my-repo --input '{\"description\":{\"q\":{\"kind\":100,\"conditions\":[{\"kind\":11,\"completed\":false}]},\"page\":1,\"pageSize\":20}}' --json",
         ),
       ],
     ),

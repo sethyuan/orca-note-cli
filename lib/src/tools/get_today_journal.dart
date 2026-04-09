@@ -23,11 +23,11 @@ OrcaToolCommand createGetTodayJournalCommand(OrcaNoteCommandContext context) {
       examples: <ToolExample>[
         ToolExample(
           description: 'Fetch today\'s journal and render it as text.',
-          command: 'orcanote get_today_journal --repo=my-repo',
+          command: 'orcanote get_today_journal --repo my-repo',
         ),
         ToolExample(
           description: 'Fetch today\'s journal and keep the raw JSON.',
-          command: 'orcanote get_today_journal --repo=my-repo --json',
+          command: 'orcanote get_today_journal --repo my-repo --json',
         ),
       ],
     ),

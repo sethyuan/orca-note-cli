@@ -29,12 +29,12 @@ OrcaToolCommand createDeleteBlocksCommand(OrcaNoteCommandContext context) {
         ToolExample(
           description: 'Delete two blocks and show formatted output.',
           command:
-              "orcanote delete_blocks --repo=my-repo --input='{\"blockIds\":[4001,4002]}'",
+              "orcanote delete_blocks --repo my-repo --input '{\"blockIds\":[4001,4002]}'",
         ),
         ToolExample(
           description: 'Delete blocks and keep the raw JSON response.',
           command:
-              "orcanote delete_blocks --repo=my-repo --input='{\"blockIds\":[4001,4002]}' --json",
+              "orcanote delete_blocks --repo my-repo --input '{\"blockIds\":[4001,4002]}' --json",
         ),
       ],
     ),

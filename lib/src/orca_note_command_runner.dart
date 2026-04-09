@@ -33,8 +33,8 @@ class OrcaNoteCommandRunner extends CommandRunner<int> {
   String get usage {
     return '${super.usage}\n\nQuick start:\n'
         '  orcanote config set-token <token>\n'
-        '  orcanote get_today_journal --repo=<repoId>\n'
-        "  orcanote get_blocks_text --repo=<repoId> --input='{\"blockIds\":[12345]}'";
+        '  orcanote get_today_journal --repo <repoId>\n'
+        "  orcanote get_blocks_text --repo <repoId> --input '{\"blockIds\":[12345]}'";
   }
 
   @override

@@ -40,13 +40,13 @@ OrcaToolCommand createInsertMarkdownCommand(OrcaNoteCommandContext context) {
         ToolExample(
           description: 'Insert a short Markdown bullet list after a block.',
           command:
-              "orcanote insert_markdown --repo=my-repo --input='{\"refBlockId\":12345,\"text\":\"- ship cli\\n- write docs\"}'",
+              "orcanote insert_markdown --repo my-repo --input '{\"refBlockId\":12345,\"text\":\"- ship cli\\n- write docs\"}'",
         ),
         ToolExample(
           description:
               'Insert Markdown before a reference block and keep JSON output.',
           command:
-              "orcanote insert_markdown --repo=my-repo --input='{\"refBlockId\":12345,\"position\":\"before\",\"text\":\"# Release notes\"}' --json",
+              "orcanote insert_markdown --repo my-repo --input '{\"refBlockId\":12345,\"position\":\"before\",\"text\":\"# Release notes\"}' --json",
         ),
       ],
     ),

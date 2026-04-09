@@ -34,12 +34,12 @@ OrcaToolCommand createInsertTagsCommand(OrcaNoteCommandContext context) {
         ToolExample(
           description: 'Add simple tags to two blocks.',
           command:
-              "orcanote insert_tags --repo=my-repo --input='{\"blockIds\":[1,2],\"tags\":[\"status\",\"important\"]}'",
+              "orcanote insert_tags --repo my-repo --input '{\"blockIds\":[1,2],\"tags\":[\"status\",\"important\"]}'",
         ),
         ToolExample(
           description: 'Add a tag with properties and keep the raw JSON.',
           command:
-              "orcanote insert_tags --repo=my-repo --input='{\"blockIds\":[1],\"tags\":[{\"name\":\"related\",\"props\":{\"Blocks\":[4,5]}}]}' --json",
+              "orcanote insert_tags --repo my-repo --input '{\"blockIds\":[1],\"tags\":[{\"name\":\"related\",\"props\":{\"Blocks\":[4,5]}}]}' --json",
         ),
       ],
     ),

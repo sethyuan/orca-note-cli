@@ -30,13 +30,13 @@ OrcaToolCommand createCreateTagsCommand(OrcaNoteCommandContext context) {
         ToolExample(
           description: 'Create a simple tag with no custom properties.',
           command:
-              "orcanote create_tags --repo=my-repo --input='{\"tags\":[{\"name\":\"status\"}]}'",
+              "orcanote create_tags --repo my-repo --input '{\"tags\":[{\"name\":\"status\"}]}'",
         ),
         ToolExample(
           description:
               'Create a tag with a select property and keep the JSON payload.',
           command:
-              "orcanote create_tags --repo=my-repo --input='{\"tags\":[{\"name\":\"priority\",\"properties\":[{\"name\":\"level\",\"type\":\"select\",\"options\":[\"high\",\"medium\",\"low\"]}]}]}' --json",
+              "orcanote create_tags --repo my-repo --input '{\"tags\":[{\"name\":\"priority\",\"properties\":[{\"name\":\"level\",\"type\":\"select\",\"options\":[\"high\",\"medium\",\"low\"]}]}]}' --json",
         ),
       ],
     ),

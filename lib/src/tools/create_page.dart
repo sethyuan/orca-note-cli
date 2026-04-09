@@ -36,12 +36,12 @@ OrcaToolCommand createCreatePageCommand(OrcaNoteCommandContext context) {
         ToolExample(
           description: 'Create a plain page.',
           command:
-              "orcanote create_page --repo=my-repo --input='{\"name\":\"Roadmap\"}'",
+              "orcanote create_page --repo my-repo --input '{\"name\":\"Roadmap\"}'",
         ),
         ToolExample(
           description: 'Create a page and include it in two other pages.',
           command:
-              "orcanote create_page --repo=my-repo --input='{\"name\":\"Roadmap\",\"includeIn\":[\"Projects\",\"Planning\"]}' --json",
+              "orcanote create_page --repo my-repo --input '{\"name\":\"Roadmap\",\"includeIn\":[\"Projects\",\"Planning\"]}' --json",
         ),
       ],
     ),

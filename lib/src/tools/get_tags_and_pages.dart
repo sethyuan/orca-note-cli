@@ -34,12 +34,12 @@ OrcaToolCommand createGetTagsAndPagesCommand(OrcaNoteCommandContext context) {
         ToolExample(
           description:
               'Fetch the first page with the default output formatter.',
-          command: 'orcanote get_tags_and_pages --repo=my-repo',
+          command: 'orcanote get_tags_and_pages --repo my-repo',
         ),
         ToolExample(
           description: 'Fetch a smaller page and keep the JSON payload.',
           command:
-              "orcanote get_tags_and_pages --repo=my-repo --input='{\"pageNum\":1,\"pageSize\":50}' --json",
+              "orcanote get_tags_and_pages --repo my-repo --input '{\"pageNum\":1,\"pageSize\":50}' --json",
         ),
       ],
     ),

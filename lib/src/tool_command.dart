@@ -39,7 +39,7 @@ class OrcaToolCommand extends Command<int> {
 
   @override
   String get invocation {
-    return "orcanote ${metadata.name} --repo=<repoId> [--input='{...}'] [--json]";
+    return "orcanote ${metadata.name} --repo <repoId> [--input '{...}'] [--json]";
   }
 
   @override

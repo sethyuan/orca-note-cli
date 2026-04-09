@@ -30,12 +30,12 @@ OrcaToolCommand createGetPageCommand(OrcaNoteCommandContext context) {
         ToolExample(
           description: 'Resolve one block back to its page.',
           command:
-              "orcanote get_page --repo=my-repo --input='{\"blockIds\":[12345]}'",
+              "orcanote get_page --repo my-repo --input '{\"blockIds\":[12345]}'",
         ),
         ToolExample(
           description: 'Resolve multiple blocks and keep raw JSON.',
           command:
-              "orcanote get_page --repo=my-repo --input='{\"blockIds\":[12345,67890]}' --json",
+              "orcanote get_page --repo my-repo --input '{\"blockIds\":[12345,67890]}' --json",
         ),
       ],
     ),

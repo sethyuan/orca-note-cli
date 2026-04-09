@@ -39,13 +39,13 @@ OrcaToolCommand createMoveBlocksCommand(OrcaNoteCommandContext context) {
         ToolExample(
           description: 'Move two blocks under a new parent.',
           command:
-              "orcanote move_blocks --repo=my-repo --input='{\"blockIds\":[101,102],\"parentId\":999}'",
+              "orcanote move_blocks --repo my-repo --input '{\"blockIds\":[101,102],\"parentId\":999}'",
         ),
         ToolExample(
           description:
               'Move blocks after a specific sibling and keep raw JSON.',
           command:
-              "orcanote move_blocks --repo=my-repo --input='{\"blockIds\":[101,102],\"parentId\":999,\"leftId\":555}' --json",
+              "orcanote move_blocks --repo my-repo --input '{\"blockIds\":[101,102],\"parentId\":999,\"leftId\":555}' --json",
         ),
       ],
     ),

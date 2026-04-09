@@ -34,12 +34,12 @@ OrcaToolCommand createRemoveTagsCommand(OrcaNoteCommandContext context) {
         ToolExample(
           description: 'Remove two tags from a batch of blocks.',
           command:
-              "orcanote remove_tags --repo=my-repo --input='{\"blockIds\":[1,2,3],\"tags\":[\"status\",\"related\"]}'",
+              "orcanote remove_tags --repo my-repo --input '{\"blockIds\":[1,2,3],\"tags\":[\"status\",\"related\"]}'",
         ),
         ToolExample(
           description: 'Remove tags and preserve the JSON response.',
           command:
-              "orcanote remove_tags --repo=my-repo --input='{\"blockIds\":[1,2,3],\"tags\":[\"status\"]}' --json",
+              "orcanote remove_tags --repo my-repo --input '{\"blockIds\":[1,2,3],\"tags\":[\"status\"]}' --json",
         ),
       ],
     ),

@@ -25,7 +25,7 @@ On Windows the CLI falls back to `APPDATA\orcanote\config.json`.
 Each MCP tool is exposed as its own subcommand:
 
 ```sh
-orcanote <tool-name> --repo=<repoId> --input='<json object>' [--json]
+orcanote <tool-name> --repo <repoId> --input '<json object>' [--json]
 ```
 
 - `--repo` or `-r`: repository ID, mapped to the MCP argument `repoId`
@@ -35,9 +35,9 @@ orcanote <tool-name> --repo=<repoId> --input='<json object>' [--json]
 Examples:
 
 ```sh
-orcanote get_today_journal --repo=my-repo
-orcanote get_blocks_text --repo=my-repo --input='{"blockIds":[12345]}'
-orcanote query_blocks --repo=my-repo --input='{"description":{"q":{"kind":100,"conditions":[{"kind":8,"text":"deadline"}]}}}' --json
+orcanote get_today_journal --repo my-repo
+orcanote get_blocks_text --repo my-repo --input '{"blockIds":[12345]}'
+orcanote query_blocks --repo my-repo --input '{"description":{"q":{"kind":100,"conditions":[{"kind":8,"text":"deadline"}]}}}' --json
 ```
 
 ## Help
