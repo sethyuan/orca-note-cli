@@ -8,9 +8,9 @@ OrcaToolCommand createGetBlocksTextCommand(OrcaNoteCommandContext context) {
     metadata: const ToolMetadata(
       name: 'get_blocks_text',
       title: 'Get Blocks Text Content',
-      summary: 'Read structured text for blocks and their descendants.',
+      summary: 'Read concatenated text for blocks and their descendants.',
       description:
-          'Reads the text content of one or more blocks, including descendants. Optional childStartIndex and childEndIndex let you request a partial descendant range while always keeping the root block in the result.',
+          'Reads the text content of one or more blocks, including descendants, and returns plain concatenated text without indentation or block IDs. Optional childStartIndex and childEndIndex let you request a partial descendant range while always keeping the root block in the result.',
       fields: <ToolFieldMetadata>[
         ToolFieldMetadata(
           name: 'repoId',

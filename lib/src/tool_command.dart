@@ -127,6 +127,8 @@ class OrcaToolCommand extends Command<int> {
     final useJson = argResults?['json'] == true;
     final rendered = useJson
         ? OrcaNoteOutputFormatter.formatJson(payload)
+        : metadata.name == 'get_blocks_text'
+        ? OrcaNoteOutputFormatter.formatBlockText(payload)
         : OrcaNoteOutputFormatter.formatText(payload);
 
     final sink = result.isError == true ? stderr : stdout;

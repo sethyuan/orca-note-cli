@@ -11,6 +11,12 @@ class OrcaNoteOutputFormatter {
     return buffer.toString().trimRight();
   }
 
+  static String formatBlockText(Object? value) {
+    final texts = <String>[];
+    _collectBlockText(value, texts);
+    return texts.join('\n').trimRight();
+  }
+
   static void _writeValue(
     StringBuffer buffer,
     Object? value,
@@ -94,13 +100,60 @@ class OrcaNoteOutputFormatter {
     return value == null || value is String || value is num || value is bool;
   }
 
+  static void _collectBlockText(Object? value, List<String> texts) {
+    if (value is Map) {
+      final textValue = value['text'];
+      if (textValue != null) {
+        if (_isScalar(textValue)) {
+          final text = _scalarToString(textValue).trimRight();
+          if (text.isNotEmpty) {
+            texts.add(text);
+          }
+        } else {
+          _collectBlockText(textValue, texts);
+        }
+      }
+
+      for (final entry in value.entries) {
+        final key = entry.key.toString();
+        if (key == 'text' ||
+            key == 'id' ||
+            key == 'blockId' ||
+            key == 'success' ||
+            key == 'repoId') {
+          continue;
+        }
+
+        final child = entry.value;
+        if (child is Map || child is List) {
+          _collectBlockText(child, texts);
+        }
+      }
+      return;
+    }
+
+    if (value is List) {
+      for (final item in value) {
+        _collectBlockText(item, texts);
+      }
+      return;
+    }
+
+    if (_isScalar(value)) {
+      final text = _scalarToString(value).trimRight();
+      if (text.isNotEmpty) {
+        texts.add(text);
+      }
+    }
+  }
+
   static String _scalarToString(Object? value) {
     if (value == null) {
       return 'null';
     }
 
     if (value is String) {
-      return value.contains('\n') ? jsonEncode(value) : value;
+      return value;
     }
 
     return value.toString();
