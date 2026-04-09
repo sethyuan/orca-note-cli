@@ -1,6 +1,6 @@
 # orca-note-cli
 
-orca-note-cli is a Dart CLI wrapper around the Orca Note MCP server. The published executable name is `orcanote`.
+A CLI wrapper around the Orca Note MCP server. The published executable name is `orcanote`.
 
 ## Configuration
 
