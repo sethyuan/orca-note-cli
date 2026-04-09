@@ -1,0 +1,55 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact_name: orcanote-linux
+            binary_name: orcanote
+          - os: macos-latest
+            artifact_name: orcanote-macos
+            binary_name: orcanote
+          - os: windows-latest
+            artifact_name: orcanote-windows
+            binary_name: orcanote.exe
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Dart SDK
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 3.11.3
+
+      - name: Fetch dependencies
+        shell: pwsh
+        run: dart pub get
+
+      - name: Compile executable
+        shell: pwsh
+        run: |
+          dart compile exe -o ${{ matrix.binary_name }} -S symbols.debug bin/orcanote.dart
+
+      - name: Upload executable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: |
+            ${{ matrix.binary_name }}
+          if-no-files-found: error
