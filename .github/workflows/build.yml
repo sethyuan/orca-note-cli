@@ -27,21 +27,25 @@ jobs:
           - os: ubuntu-latest
             artifact_name: orcanote-linux
             binary_name: orcanote-linux
+            zip_name: orcanote-linux.zip
             artifact_paths: |
               orcanote-linux.zip
           - os: macos-15-intel
             artifact_name: orcanote-macos-intel
             binary_name: orcanote-macos-intel
+            zip_name: orcanote-macos-intel.zip
             artifact_paths: |
               orcanote-macos-intel.zip
           - os: macos-latest
             artifact_name: orcanote-macos-silicon
             binary_name: orcanote-macos-silicon
+            zip_name: orcanote-macos-silicon.zip
             artifact_paths: |
               orcanote-macos-silicon.zip
           - os: windows-latest
             artifact_name: orcanote-windows
             binary_name: orcanote-windows.exe
+            zip_name: orcanote-windows.zip
             artifact_paths: |
               orcanote-windows.zip
 
@@ -69,7 +73,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          zip -j "${{ matrix.binary_name }}.zip" "${{ matrix.binary_name }}"
+          zip -j "${{ matrix.zip_name }}" "${{ matrix.binary_name }}"
 
       - name: Import macOS code-signing certificate
         if: startsWith(matrix.os, 'macos')
@@ -92,16 +96,14 @@ jobs:
         run: |
           set -euo pipefail
 
-          ditto -c -k --keepParent "${{ matrix.binary_name }}" "${{ matrix.binary_name }}.zip"
-          xcrun notarytool submit "${{ matrix.binary_name }}.zip" --apple-id "$MACOS_APPLE_ID" --team-id "$MACOS_TEAM_ID" --password "$MACOS_APP_SPECIFIC_PASSWORD" --wait
-          xcrun stapler staple "${{ matrix.binary_name }}.zip"
-          xcrun stapler validate "${{ matrix.binary_name }}.zip"
+          ditto -c -k --keepParent "${{ matrix.binary_name }}" "${{ matrix.zip_name }}"
+          xcrun notarytool submit "${{ matrix.zip_name }}" --apple-id "$MACOS_APPLE_ID" --team-id "$MACOS_TEAM_ID" --password "$MACOS_APP_SPECIFIC_PASSWORD" --wait
 
       - name: Package Windows executable
         if: matrix.os == 'windows-latest'
         shell: pwsh
         run: |
-          Compress-Archive -Path "${{ matrix.binary_name }}" -DestinationPath "${{ matrix.binary_name }}.zip" -Force
+          Compress-Archive -Path "${{ matrix.binary_name }}" -DestinationPath "${{ matrix.zip_name }}" -Force
 
       - name: Upload executable artifact
         uses: actions/upload-artifact@v4
