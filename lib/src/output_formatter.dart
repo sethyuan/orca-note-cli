@@ -128,6 +128,10 @@ class OrcaNoteOutputFormatter {
         if (child is Map || child is List) {
           _collectBlockText(child, texts);
         }
+
+        if (key == "blocks") {
+          texts.add('');
+        }
       }
       return;
     }
