@@ -14,6 +14,12 @@ jobs:
     name: Build ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
+    env:
+      MACOS_APPLE_ID: ${{ secrets.MACOS_APPLE_ID }}
+      MACOS_TEAM_ID: ${{ secrets.MACOS_TEAM_ID }}
+      MACOS_SIGNING_IDENTITY: ${{ secrets.MACOS_SIGNING_IDENTITY }}
+      MACOS_APP_SPECIFIC_PASSWORD: ${{ secrets.MACOS_APP_SPECIFIC_PASSWORD }}
+
     strategy:
       fail-fast: false
       matrix:
@@ -21,12 +27,25 @@ jobs:
           - os: ubuntu-latest
             artifact_name: orcanote-linux
             binary_name: orcanote-linux
+            artifact_paths: |
+              orcanote-linux
+          - os: macos-15-intel
+            artifact_name: orcanote-macos-intel
+            binary_name: orcanote-macos-intel
+            artifact_paths: |
+              orcanote-macos-intel
+              orcanote-macos-intel.zip
           - os: macos-latest
-            artifact_name: orcanote-macos
-            binary_name: orcanote-macos
+            artifact_name: orcanote-macos-silicon
+            binary_name: orcanote-macos-silicon
+            artifact_paths: |
+              orcanote-macos-silicon
+              orcanote-macos-silicon.zip
           - os: windows-latest
             artifact_name: orcanote-windows
             binary_name: orcanote-windows.exe
+            artifact_paths: |
+              orcanote-windows.exe
 
     steps:
       - name: Checkout repository
@@ -46,12 +65,36 @@ jobs:
         run: |
           dart compile exe -o ${{ matrix.binary_name }} -S symbols.debug bin/orcanote.dart
 
+      - name: Import macOS code-signing certificate
+        if: startsWith(matrix.os, 'macos')
+        uses: apple-actions/import-codesign-certs@v6
+        with:
+          p12-file-base64: ${{ secrets.MACOS_CERTIFICATE_P12_BASE64 }}
+          p12-password: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
+
+      - name: Sign macOS executable
+        if: startsWith(matrix.os, 'macos')
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          codesign --force --options runtime --timestamp --sign "$MACOS_SIGNING_IDENTITY" "${{ matrix.binary_name }}"
+
+      - name: Notarize macOS executable
+        if: startsWith(matrix.os, 'macos')
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ditto -c -k --keepParent "${{ matrix.binary_name }}" "${{ matrix.binary_name }}.zip"
+          xcrun notarytool submit "${{ matrix.binary_name }}.zip" --apple-id "$MACOS_APPLE_ID" --team-id "$MACOS_TEAM_ID" --password "$MACOS_APP_SPECIFIC_PASSWORD" --wait
+
       - name: Upload executable artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
           path: |
-            ${{ matrix.binary_name }}
+            ${{ matrix.artifact_paths }}
           if-no-files-found: error
 
   release:
@@ -90,5 +133,6 @@ jobs:
           generate_release_notes: true
           files: |
             dist/orcanote-linux
-            dist/orcanote-macos
+            dist/orcanote-macos-intel
+            dist/orcanote-macos-silicon
             dist/orcanote-windows.exe
