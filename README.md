@@ -4,6 +4,12 @@ A CLI wrapper around the Orca Note MCP server. The published executable name is 
 
 ## Configuration
 
+If you are using macOS, remove the quarantine attribute from the downloaded `orcanote` binary before running it:
+
+```sh
+xattr -r -d com.apple.quarantine orcanote
+```
+
 Orca Note MCP uses Streamable HTTP with a Bearer token.
 
 Configure the token once:

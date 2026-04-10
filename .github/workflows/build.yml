@@ -20,25 +20,25 @@ jobs:
         include:
           - os: ubuntu-latest
             artifact_name: orcanote-linux
-            binary_name: orcanote-linux
+            binary_name: orcanote
             package_name: orcanote-linux.zip
             artifact_paths: |
               orcanote-linux.zip
           - os: macos-15-intel
             artifact_name: orcanote-macos-intel
-            binary_name: orcanote-macos-intel
+            binary_name: orcanote
             zip_name: orcanote-macos-intel.zip
             artifact_paths: |
               orcanote-macos-intel.zip
           - os: macos-latest
             artifact_name: orcanote-macos-silicon
-            binary_name: orcanote-macos-silicon
+            binary_name: orcanote
             zip_name: orcanote-macos-silicon.zip
             artifact_paths: |
               orcanote-macos-silicon.zip
           - os: windows-latest
             artifact_name: orcanote-windows
-            binary_name: orcanote-windows.exe
+            binary_name: orcanote.exe
             package_name: orcanote-windows.zip
             artifact_paths: |
               orcanote-windows.zip
