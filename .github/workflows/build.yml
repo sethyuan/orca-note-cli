@@ -27,25 +27,25 @@ jobs:
           - os: ubuntu-latest
             artifact_name: orcanote-linux
             binary_name: orcanote-linux
-            zip_name: orcanote-linux.zip
+            package_name: orcanote-linux.zip
             artifact_paths: |
               orcanote-linux.zip
           - os: macos-15-intel
             artifact_name: orcanote-macos-intel
             binary_name: orcanote-macos-intel
-            zip_name: orcanote-macos-intel.zip
+            package_name: orcanote-macos-intel.dmg
             artifact_paths: |
-              orcanote-macos-intel.zip
+              orcanote-macos-intel.dmg
           - os: macos-latest
             artifact_name: orcanote-macos-silicon
             binary_name: orcanote-macos-silicon
-            zip_name: orcanote-macos-silicon.zip
+            package_name: orcanote-macos-silicon.dmg
             artifact_paths: |
-              orcanote-macos-silicon.zip
+              orcanote-macos-silicon.dmg
           - os: windows-latest
             artifact_name: orcanote-windows
             binary_name: orcanote-windows.exe
-            zip_name: orcanote-windows.zip
+            package_name: orcanote-windows.zip
             artifact_paths: |
               orcanote-windows.zip
 
@@ -73,7 +73,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          zip -j "${{ matrix.zip_name }}" "${{ matrix.binary_name }}"
+          zip -j "${{ matrix.package_name }}" "${{ matrix.binary_name }}"
 
       - name: Import macOS code-signing certificate
         if: startsWith(matrix.os, 'macos')
@@ -96,14 +96,19 @@ jobs:
         run: |
           set -euo pipefail
 
-          ditto -c -k --keepParent "${{ matrix.binary_name }}" "${{ matrix.zip_name }}"
-          xcrun notarytool submit "${{ matrix.zip_name }}" --apple-id "$MACOS_APPLE_ID" --team-id "$MACOS_TEAM_ID" --password "$MACOS_APP_SPECIFIC_PASSWORD" --wait
+          staging_dir="$(mktemp -d)"
+          cp "${{ matrix.binary_name }}" "$staging_dir/"
+          hdiutil create -volname "${{ matrix.artifact_name }}" -srcfolder "$staging_dir" -ov -format UDZO "${{ matrix.package_name }}"
+          xcrun notarytool submit "${{ matrix.package_name }}" --apple-id "$MACOS_APPLE_ID" --team-id "$MACOS_TEAM_ID" --password "$MACOS_APP_SPECIFIC_PASSWORD" --wait
+          xcrun stapler staple "${{ matrix.package_name }}"
+          xcrun stapler validate "${{ matrix.package_name }}"
+          spctl --assess --type open --verbose=4 "${{ matrix.package_name }}"
 
       - name: Package Windows executable
         if: matrix.os == 'windows-latest'
         shell: pwsh
         run: |
-          Compress-Archive -Path "${{ matrix.binary_name }}" -DestinationPath "${{ matrix.zip_name }}" -Force
+          Compress-Archive -Path "${{ matrix.binary_name }}" -DestinationPath "${{ matrix.package_name }}" -Force
 
       - name: Upload executable artifact
         uses: actions/upload-artifact@v4
@@ -149,6 +154,6 @@ jobs:
           generate_release_notes: true
           files: |
             dist/orcanote-linux.zip
-            dist/orcanote-macos-intel.zip
-            dist/orcanote-macos-silicon.zip
+            dist/orcanote-macos-intel.dmg
+            dist/orcanote-macos-silicon.dmg
             dist/orcanote-windows.zip
