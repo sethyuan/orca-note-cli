@@ -133,6 +133,6 @@ jobs:
           generate_release_notes: true
           files: |
             dist/orcanote-linux
-            dist/orcanote-macos-intel
-            dist/orcanote-macos-silicon
+            dist/orcanote-macos-intel.zip
+            dist/orcanote-macos-silicon.zip
             dist/orcanote-windows.exe
