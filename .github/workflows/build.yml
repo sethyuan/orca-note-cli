@@ -28,24 +28,22 @@ jobs:
             artifact_name: orcanote-linux
             binary_name: orcanote-linux
             artifact_paths: |
-              orcanote-linux
+              orcanote-linux.zip
           - os: macos-15-intel
             artifact_name: orcanote-macos-intel
             binary_name: orcanote-macos-intel
             artifact_paths: |
-              orcanote-macos-intel
               orcanote-macos-intel.zip
           - os: macos-latest
             artifact_name: orcanote-macos-silicon
             binary_name: orcanote-macos-silicon
             artifact_paths: |
-              orcanote-macos-silicon
               orcanote-macos-silicon.zip
           - os: windows-latest
             artifact_name: orcanote-windows
             binary_name: orcanote-windows.exe
             artifact_paths: |
-              orcanote-windows.exe
+              orcanote-windows.zip
 
     steps:
       - name: Checkout repository
@@ -64,6 +62,14 @@ jobs:
         shell: pwsh
         run: |
           dart compile exe -o ${{ matrix.binary_name }} -S symbols.debug bin/orcanote.dart
+
+      - name: Package Linux executable
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          zip -j "${{ matrix.binary_name }}.zip" "${{ matrix.binary_name }}"
 
       - name: Import macOS code-signing certificate
         if: startsWith(matrix.os, 'macos')
@@ -88,6 +94,14 @@ jobs:
 
           ditto -c -k --keepParent "${{ matrix.binary_name }}" "${{ matrix.binary_name }}.zip"
           xcrun notarytool submit "${{ matrix.binary_name }}.zip" --apple-id "$MACOS_APPLE_ID" --team-id "$MACOS_TEAM_ID" --password "$MACOS_APP_SPECIFIC_PASSWORD" --wait
+          xcrun stapler staple "${{ matrix.binary_name }}.zip"
+          xcrun stapler validate "${{ matrix.binary_name }}.zip"
+
+      - name: Package Windows executable
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "${{ matrix.binary_name }}" -DestinationPath "${{ matrix.binary_name }}.zip" -Force
 
       - name: Upload executable artifact
         uses: actions/upload-artifact@v4
@@ -132,7 +146,7 @@ jobs:
           target_commitish: ${{ github.sha }}
           generate_release_notes: true
           files: |
-            dist/orcanote-linux
+            dist/orcanote-linux.zip
             dist/orcanote-macos-intel.zip
             dist/orcanote-macos-silicon.zip
-            dist/orcanote-windows.exe
+            dist/orcanote-windows.zip
