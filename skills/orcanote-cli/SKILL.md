@@ -42,5 +42,5 @@ Rules:
 
 ## References
 
-- Tool catalog and examples: [references/tools.md](references/tools.md)
-- `query_blocks` grammar and examples: [references/query-blocks.md](references/query-blocks.md)
+- Tool catalog, examples, and output formats: [references/tools.md](references/tools.md)
+- `query_blocks` grammar, parameter semantics, and output formats: [references/query-blocks.md](references/query-blocks.md)
