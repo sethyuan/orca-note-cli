@@ -407,7 +407,7 @@ Input JSON:
     {
       "name": "related",
       "props": {
-        "Blocks": [601, 602]
+        "Blocks": [601, "Project A", "123"]
       }
     }
   ]
@@ -419,7 +419,10 @@ Notes:
 - Maximum 100 blocks and 100 tags per call.
 - Tag names must not start with `_`.
 - Date property values must use Unix seconds.
-- `block-ref` property values must be arrays of block IDs.
+- `block-ref` property values must be arrays of block IDs or alias strings.
+- If an alias string already exists, the reference targets that alias's block.
+- If an alias string does not exist, Orca Note creates an alias block automatically and uses that block as the target.
+- Pure numeric strings such as `"123"` are treated as aliases, not block IDs.
 
 Success output:
 
