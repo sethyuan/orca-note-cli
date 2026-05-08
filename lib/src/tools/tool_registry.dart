@@ -3,6 +3,7 @@ import '../tool_command.dart';
 import 'create_page.dart';
 import 'create_tags.dart';
 import 'delete_blocks.dart';
+import 'get_blocks_structure.dart';
 import 'get_blocks_text.dart';
 import 'get_page.dart';
 import 'get_tags_and_pages.dart';
@@ -17,6 +18,7 @@ List<OrcaToolCommand> createToolCommands(OrcaNoteCommandContext context) {
   return <OrcaToolCommand>[
     createGetTagsAndPagesCommand(context),
     createGetPageCommand(context),
+    createGetBlocksStructureCommand(context),
     createGetBlocksTextCommand(context),
     createGetTodayJournalCommand(context),
     createQueryBlocksCommand(context),

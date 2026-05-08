@@ -208,6 +208,68 @@ Failure output:
 }
 ```
 
+## get_blocks_structure
+
+Returns the direct parent and ordered child block IDs for each requested block.
+
+Input JSON:
+
+```json
+{
+  "blockIds": [210, 211]
+}
+```
+
+Notes:
+
+- `results` is an object keyed by block ID.
+- Each resolved entry only contains `parent` and `children`.
+- `children` follows Orca Note's block ordering semantics.
+- Root blocks return `parent: null`.
+- If a specific block cannot be resolved, that entry returns an `error` field instead of failing the whole request.
+
+Success output:
+
+```json
+{
+  "success": true,
+  "repoId": "my-repo",
+  "results": {
+    "210": {
+      "parent": 100,
+      "children": [310, 311, 312]
+    },
+    "211": {
+      "parent": null,
+      "children": []
+    }
+  }
+}
+```
+
+Per-block error example:
+
+```json
+{
+  "success": true,
+  "repoId": "my-repo",
+  "results": {
+    "999999": {
+      "error": "Block 999999 not found in repository my-repo"
+    }
+  }
+}
+```
+
+Failure output:
+
+```json
+{
+  "success": false,
+  "error": "Error retrieving blocks structure: No block IDs provided."
+}
+```
+
 ## get_page
 
 Finds the containing page or journal for each block.

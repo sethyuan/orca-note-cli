@@ -65,6 +65,7 @@ orcanote query_blocks --help
 
 - `get_tags_and_pages`
 - `get_page`
+- `get_blocks_structure`
 - `get_blocks_text`
 - `get_today_journal`
 - `query_blocks`

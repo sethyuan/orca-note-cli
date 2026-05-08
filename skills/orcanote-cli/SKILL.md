@@ -23,16 +23,17 @@ Rules:
 ## Default Workflow
 
 1. Discover IDs before writing when the target block, page, or tag is not already known.
-2. Use read-oriented tools first: `get_tags_and_pages`, `get_today_journal`, `query_blocks`, `get_page`, `get_blocks_text`.
-3. Apply mutations with the smallest valid batch.
-4. Re-read after destructive changes if the user needs confirmation.
+2. Use read-oriented tools first: `get_tags_and_pages`, `get_today_journal`, `query_blocks`, `get_page`, `get_blocks_structure`, `get_blocks_text`.
+3. When a write depends on parent-child placement, inspect structure before mutating: use `get_blocks_structure` to confirm the direct parent and ordered children of the target blocks.
+4. Apply mutations with the smallest valid batch.
+5. Re-read after destructive changes if the user needs confirmation.
 
 ## Tool Selection
 
 - Create content: `create_page`, `create_tags`, `insert_markdown`
 - Change structure: `move_blocks`, `delete_blocks`
 - Manage tags: `insert_tags`, `remove_tags`
-- Inspect repository state: `get_blocks_text`, `get_page`, `get_tags_and_pages`, `get_today_journal`, `query_blocks`
+- Inspect repository state: `get_blocks_structure`, `get_blocks_text`, `get_page`, `get_tags_and_pages`, `get_today_journal`, `query_blocks`
 
 ## Guardrails
 
