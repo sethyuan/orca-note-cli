@@ -191,7 +191,8 @@ Success output:
         },
         {
           "id": 202,
-          "text": "Child block"
+          "text": "Child block and [Root block]",
+          "links": [201]
         }
       ]
     }
