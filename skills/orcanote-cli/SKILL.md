@@ -1,11 +1,11 @@
 ---
 name: orcanote-cli
-description: Use this skill when you need to operate an Orca Note repository through the orcanote CLI. It covers page, tag, block, and query operations.
+description: Read, write, query and manipulate an Orca Note note repository. Use this skill when users need to operate on their notes.
 ---
 
 # OrcaNote CLI
 
-Use this skill when the user wants to read or mutate an Orca Note repository through the `orcanote` command.
+Use this skill when the user wants to read, write, query, or manipulate an Orca Note repository through the `orcanote` command.
 
 ## Command Shape
 
@@ -32,16 +32,16 @@ Rules:
 
 - Create content: `create_page`, `create_tags`, `insert_markdown`
 - Change structure: `move_blocks`, `delete_blocks`
+- Read content: `get_blocks_text`, `get_blocks_structure`, `get_page`
 - Manage tags: `insert_tags`, `remove_tags`
-- Inspect repository state: `get_blocks_structure`, `get_blocks_text`, `get_page`, `get_tags_and_pages`, `get_today_journal`, `query_blocks`
+- Inspect repository: `get_tags_and_pages`, `get_today_journal`, `query_blocks`
+
+For tool details, usage, input formats, and output formats, see the [tool catalog](references/tools.md).
+
+For `query_blocks` grammar, parameter semantics, and output formats, see [references/query-blocks.md](references/query-blocks.md).
 
 ## Guardrails
 
 - `insert_tags` and `remove_tags` accept at most 100 blocks and 100 tags per call.
 - `get_blocks_text` requires `childStartIndex` and `childEndIndex` together when using partial reads.
 - `query_blocks` expects the full query payload under `description`.
-
-## References
-
-- Tool catalog, examples, and output formats: [references/tools.md](references/tools.md)
-- `query_blocks` grammar, parameter semantics, and output formats: [references/query-blocks.md](references/query-blocks.md)
