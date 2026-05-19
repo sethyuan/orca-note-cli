@@ -40,6 +40,12 @@ For tool details, usage, input formats, and output formats, see the [tool catalo
 
 For `query_blocks` grammar, parameter semantics, and output formats, see [references/query-blocks.md](references/query-blocks.md).
 
+## Writing Guidelines
+
+- When inserting content with tags, favor `insert_markdown` over `insert_tags`.
+- Tags are usually attached to title lines or lines with a similar purpose.
+- When applying a tag, be sure to check its properties and provide reasonable values; if no reasonable values are available, do not provide them to use the property's default values.
+
 ## Guardrails
 
 - `insert_tags` and `remove_tags` accept at most 100 blocks and 100 tags per call.

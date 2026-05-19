@@ -413,7 +413,7 @@ Failure output:
 
 ## insert_markdown
 
-Parses plain text or Markdown and inserts it relative to a reference block.
+Insert Markdown with optional tags and tag properties relative to a reference block.
 
 Input JSON:
 
@@ -421,7 +421,7 @@ Input JSON:
 {
   "refBlockId": 401,
   "position": "lastChild",
-  "text": "# Agenda\n- Review status\n- Plan next step"
+  "text": "# Agenda #Meeting{\"Location\":\"Room A\"}\n- Review status\n- Plan next step"
 }
 ```
 
@@ -436,6 +436,10 @@ Notes:
 
 - If `position` is omitted, the tool uses Orca Note's smart default insertion behavior.
 - `text` is required.
+- Tag syntax: `#Tag Name` or `#Tag Name{"Property":"Value"}` after the content, before the line break.
+- Add tag properties by appending a single line JSON object immediately after the tag name.
+- Date property values must use Unix seconds.
+- `block-ref` property values must be arrays of block IDs or alias strings; missing aliases are created automatically.
 
 Success output:
 
