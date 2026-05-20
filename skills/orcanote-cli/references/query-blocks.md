@@ -144,7 +144,7 @@ Parameters:
 Date spec format:
 
 - Relative: `{ "t": 1, "v": -7, "u": "d" }`
-- Absolute: `{ "t": 2, "v": 1712707200000 }`
+- Absolute: `{ "t": 2, "v": 1712707200000 }` (UNIX timestamp in milliseconds)
 
 Units:
 

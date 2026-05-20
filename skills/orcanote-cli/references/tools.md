@@ -382,15 +382,23 @@ Failure output:
 }
 ```
 
-## get_today_journal
+## get_journal
 
-Returns today's journal block ID, creating it if needed.
+Returns the journal block ID for a specified date, creating it if needed. If `date` is omitted, the current date is used.
 
 Input JSON:
 
 ```json
-{}
+{
+  "repoId": "my-repo",
+  "date": 1776432000
+}
 ```
+
+Notes:
+
+- `repoId` is required.
+- `date` is optional and must be a Unix timestamp in seconds.
 
 Success output:
 
@@ -407,7 +415,92 @@ Failure output:
 ```json
 {
   "success": false,
-  "error": "Error retrieving today's journal: ..."
+  "error": "Error retrieving journal: ..."
+}
+```
+
+## parse_datetime
+
+Parses a date/time string using local time and returns both a Unix timestamp in seconds and a formatted local datetime string.
+
+This tool does not require `repoId`.
+
+Input JSON:
+
+```json
+{
+  "text": "3 days later",
+  "referenceTimestamp": 1778932800
+}
+```
+
+Notes:
+
+- `text` is required.
+- `referenceTimestamp` is optional and must be a Unix timestamp in seconds.
+- Supports ISO strings, natural language (in English), and `now` for the current local date and time.
+
+Success output:
+
+```json
+{
+  "success": true,
+  "timestamp": 1779199200,
+  "formattedDatetime": "2026-05-18 09:20:00 +08:00"
+}
+```
+
+Failure output:
+
+```json
+{
+  "success": false,
+  "error": "Error parsing date/time: Could not parse date/time string: not a date"
+}
+```
+
+## shift_datetime
+
+Applies a relative offset to a base Unix timestamp in seconds and returns both the resulting Unix timestamp in seconds and a formatted local datetime string.
+
+This tool does not require `repoId`.
+
+Input JSON:
+
+```json
+{
+  "baseTimestamp": 1778932800,
+  "amount": -3,
+  "unit": "d"
+}
+```
+
+Valid `unit` values:
+
+- `s`
+- `m`
+- `h`
+- `d`
+- `w`
+- `M`
+- `y`
+
+Success output:
+
+```json
+{
+  "success": true,
+  "timestamp": 1778673600,
+  "formattedDatetime": "2026-05-12 09:20:00 +08:00"
+}
+```
+
+Failure output:
+
+```json
+{
+  "success": false,
+  "error": "Error shifting date/time: ..."
 }
 ```
 

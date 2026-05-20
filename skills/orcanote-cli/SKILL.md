@@ -10,23 +10,20 @@ Use this skill when the user wants to read, write, query, or manipulate an Orca 
 ## Command Shape
 
 ```sh
-orcanote <tool-name> --repo <repoId> --input '<json object>' [--json]
+orcanote <tool_name> --repo <repoId> --input '<json object>' --json
 ```
 
 Rules:
 
 - Put every parameter except `repoId` inside `--input`.
-- Prefer `--json` so the response is stable and machine-readable.
-- Use the tool name with underscores as `<tool-name>`.
-- On macOS and Linux, single-quote the JSON string. If the payload contains embedded quotes or multiline markdown, build the JSON carefully before passing it to the command.
+- Single-quote the JSON string. If the payload contains embedded quotes or multiline markdown, build the JSON carefully before passing it to the command.
 
 ## Default Workflow
 
 1. Discover IDs before writing when the target block, page, or tag is not already known.
-2. Use read-oriented tools first: `get_tags_and_pages`, `get_today_journal`, `query_blocks`, `get_page`, `get_blocks_structure`, `get_blocks_text`.
-3. When a write depends on parent-child placement, inspect structure before mutating: use `get_blocks_structure` to confirm the direct parent and ordered children of the target blocks.
-4. Apply mutations with the smallest valid batch.
-5. Re-read after destructive changes if the user needs confirmation.
+2. When a write depends on parent-child placement, inspect structure before mutating: use `get_blocks_structure` to confirm the direct parent and ordered children of the target blocks.
+3. Apply mutations with the smallest valid batch.
+4. Re-read after destructive changes if the user needs confirmation.
 
 ## Tool Selection
 
@@ -34,7 +31,9 @@ Rules:
 - Change structure: `move_blocks`, `delete_blocks`
 - Read content: `get_blocks_text`, `get_blocks_structure`, `get_page`
 - Manage tags: `insert_tags`, `remove_tags`
-- Inspect repository: `get_tags_and_pages`, `get_today_journal`, `query_blocks`
+- Inspect repository: `get_tags_and_pages`, `get_journal`, `query_blocks`
+- Date/time manipulation: `parse_datetime`, `shift_datetime`
+- Use `parse_datetime` with `{"text":"now"}` when you need the current local date and time.
 
 For tool details, usage, input formats, and output formats, see the [tool catalog](references/tools.md).
 
