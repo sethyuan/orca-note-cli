@@ -19,6 +19,13 @@ class ToolExample {
   final String command;
 }
 
+class ToolSectionMetadata {
+  const ToolSectionMetadata({required this.title, required this.body});
+
+  final String title;
+  final String body;
+}
+
 class ToolMetadata {
   const ToolMetadata({
     required this.name,
@@ -28,6 +35,7 @@ class ToolMetadata {
     required this.fields,
     required this.requiredFields,
     required this.examples,
+    this.sections = const <ToolSectionMetadata>[],
   });
 
   final String name;
@@ -37,6 +45,7 @@ class ToolMetadata {
   final List<ToolFieldMetadata> fields;
   final List<String> requiredFields;
   final List<ToolExample> examples;
+  final List<ToolSectionMetadata> sections;
 
   bool get requiresRepo {
     return fields.any(

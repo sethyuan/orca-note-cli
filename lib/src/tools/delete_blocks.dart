@@ -10,7 +10,7 @@ OrcaToolCommand createDeleteBlocksCommand(OrcaNoteCommandContext context) {
       title: 'Delete Blocks',
       summary: 'Delete multiple blocks by ID.',
       description:
-          'Deletes one or more blocks from the repository in a single tool call.',
+          'Deletes blocks by ID. blockIds must be a non-empty array of numeric block IDs.',
       fields: <ToolFieldMetadata>[
         ToolFieldMetadata(
           name: 'repoId',
@@ -25,16 +25,44 @@ OrcaToolCommand createDeleteBlocksCommand(OrcaNoteCommandContext context) {
         ),
       ],
       requiredFields: <String>['repoId', 'blockIds'],
+      sections: <ToolSectionMetadata>[
+        ToolSectionMetadata(
+          title: 'Input shape',
+          body:
+              '{\n'
+              '  "blockIds": [101, 102, 103]\n'
+              '}',
+        ),
+        ToolSectionMetadata(
+          title: 'Notes',
+          body: '- blockIds must be a non-empty array of numeric block IDs.',
+        ),
+        ToolSectionMetadata(
+          title: 'Success output',
+          body:
+              '{\n'
+              '  "success": true\n'
+              '}',
+        ),
+        ToolSectionMetadata(
+          title: 'Failure output',
+          body:
+              '{\n'
+              '  "success": false,\n'
+              '  "error": "No block IDs provided for deletion."\n'
+              '}',
+        ),
+      ],
       examples: <ToolExample>[
         ToolExample(
-          description: 'Delete two blocks and show formatted output.',
+          description: 'Delete a batch of blocks.',
           command:
-              "orcanote delete_blocks --repo my-repo --input '{\"blockIds\":[4001,4002]}'",
+              "orcanote delete_blocks --repo my-repo --input '{\"blockIds\":[101,102,103]}'",
         ),
         ToolExample(
           description: 'Delete blocks and keep the raw JSON response.',
           command:
-              "orcanote delete_blocks --repo my-repo --input '{\"blockIds\":[4001,4002]}' --json",
+              "orcanote delete_blocks --repo my-repo --input '{\"blockIds\":[101,102,103]}' --json",
         ),
       ],
     ),

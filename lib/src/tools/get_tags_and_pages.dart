@@ -10,7 +10,7 @@ OrcaToolCommand createGetTagsAndPagesCommand(OrcaNoteCommandContext context) {
       title: 'Get Tags and Pages List',
       summary: 'List tags and pages from a repository with pagination.',
       description:
-          'Fetches tags and page blocks from an Orca Note repository. The response includes tag property definitions and supports paging through large repositories.',
+          'Lists tags and pages with pagination. Returned properties exclude names that start with an underscore.',
       fields: <ToolFieldMetadata>[
         ToolFieldMetadata(
           name: 'repoId',
@@ -30,6 +30,73 @@ OrcaToolCommand createGetTagsAndPagesCommand(OrcaNoteCommandContext context) {
         ),
       ],
       requiredFields: <String>['repoId'],
+      sections: <ToolSectionMetadata>[
+        ToolSectionMetadata(
+          title: 'Input shape',
+          body:
+              '{\n'
+              '  "pageNum": 1,\n'
+              '  "pageSize": 200\n'
+              '}',
+        ),
+        ToolSectionMetadata(
+          title: 'Notes',
+          body:
+              '- pageNum defaults to 1.\n'
+              '- pageSize defaults to 200.\n'
+              '- Returned properties exclude names that start with _.',
+        ),
+        ToolSectionMetadata(
+          title: 'Success output',
+          body:
+              '{\n'
+              '  "success": true,\n'
+              '  "pagination": {\n'
+              '    "pageNum": 1,\n'
+              '    "pageSize": 200\n'
+              '  },\n'
+              '  "tags": {\n'
+              '    "total": 20,\n'
+              '    "totalPages": 1,\n'
+              '    "items": [\n'
+              '      {\n'
+              '        "id": 11,\n'
+              '        "name": "task",\n'
+              '        "properties": [\n'
+              '          {\n'
+              '            "name": "priority",\n'
+              '            "type": "TextChoices",\n'
+              '            "details": {\n'
+              '              "subType": "single",\n'
+              '              "choices": ["low", "medium", "high"]\n'
+              '            }\n'
+              '          }\n'
+              '        ]\n'
+              '      }\n'
+              '    ]\n'
+              '  },\n'
+              '  "pages": {\n'
+              '    "total": 50,\n'
+              '    "totalPages": 1,\n'
+              '    "items": [\n'
+              '      {\n'
+              '        "id": 22,\n'
+              '        "name": "Project Roadmap",\n'
+              '        "properties": []\n'
+              '      }\n'
+              '    ]\n'
+              '  }\n'
+              '}',
+        ),
+        ToolSectionMetadata(
+          title: 'Failure output',
+          body:
+              '{\n'
+              '  "success": false,\n'
+              '  "error": "Could not retrieve tags or pages from repository: my-repo"\n'
+              '}',
+        ),
+      ],
       examples: <ToolExample>[
         ToolExample(
           description:

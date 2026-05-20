@@ -10,7 +10,7 @@ OrcaToolCommand createShiftDatetimeCommand(OrcaNoteCommandContext context) {
       title: 'Shift Date And Time',
       summary: 'Apply a relative offset to a Unix timestamp.',
       description:
-          'Applies a signed relative offset to a base Unix timestamp in seconds and returns both the resulting Unix timestamp and a formatted local datetime string.',
+          'Applies a relative offset to a base Unix timestamp in seconds and returns both the resulting timestamp and a formatted local datetime string.',
       fields: <ToolFieldMetadata>[
         ToolFieldMetadata(
           name: 'baseTimestamp',
@@ -31,6 +31,45 @@ OrcaToolCommand createShiftDatetimeCommand(OrcaNoteCommandContext context) {
         ),
       ],
       requiredFields: <String>['baseTimestamp', 'amount', 'unit'],
+      sections: <ToolSectionMetadata>[
+        ToolSectionMetadata(
+          title: 'Input shape',
+          body:
+              '{\n'
+              '  "baseTimestamp": 1778932800,\n'
+              '  "amount": -3,\n'
+              '  "unit": "d"\n'
+              '}',
+        ),
+        ToolSectionMetadata(
+          title: 'Valid unit values',
+          body:
+              '- s\n'
+              '- m\n'
+              '- h\n'
+              '- d\n'
+              '- w\n'
+              '- M\n'
+              '- y',
+        ),
+        ToolSectionMetadata(
+          title: 'Success output',
+          body:
+              '{\n'
+              '  "success": true,\n'
+              '  "timestamp": 1778673600,\n'
+              '  "formattedDatetime": "2026-05-12 09:20:00 +08:00"\n'
+              '}',
+        ),
+        ToolSectionMetadata(
+          title: 'Failure output',
+          body:
+              '{\n'
+              '  "success": false,\n'
+              '  "error": "Error shifting date/time: ..."\n'
+              '}',
+        ),
+      ],
       examples: <ToolExample>[
         ToolExample(
           description: 'Shift a timestamp three days into the past.',

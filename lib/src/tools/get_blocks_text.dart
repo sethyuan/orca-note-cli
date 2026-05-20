@@ -10,7 +10,7 @@ OrcaToolCommand createGetBlocksTextCommand(OrcaNoteCommandContext context) {
       title: 'Get Blocks Text Content',
       summary: 'Read structured text for blocks and their descendants.',
       description:
-          'Reads the text content of one or more blocks, including descendants, and returns structured text content including ID, text, and links to other block IDs. Optional childStartIndex and childEndIndex let you request a partial descendant range while always keeping the root block in the result.',
+          'Returns structured text for root blocks and their descendants. The root block is always included, even when you request a descendant slice.',
       fields: <ToolFieldMetadata>[
         ToolFieldMetadata(
           name: 'repoId',
@@ -37,16 +37,66 @@ OrcaToolCommand createGetBlocksTextCommand(OrcaNoteCommandContext context) {
         ),
       ],
       requiredFields: <String>['repoId', 'blockIds'],
+      sections: <ToolSectionMetadata>[
+        ToolSectionMetadata(
+          title: 'Input shape',
+          body:
+              '{\n'
+              '  "blockIds": [201, 202],\n'
+              '  "childStartIndex": 1,\n'
+              '  "childEndIndex": 20\n'
+              '}',
+        ),
+        ToolSectionMetadata(
+          title: 'Notes',
+          body:
+              '- The root block is always included.\n'
+              '- childStartIndex and childEndIndex are both optional, but they must be supplied together.\n'
+              '- Child ranges are 1-based and inclusive.',
+        ),
+        ToolSectionMetadata(
+          title: 'Success output',
+          body:
+              '{\n'
+              '  "success": true,\n'
+              '  "repoId": "my-repo",\n'
+              '  "results": [\n'
+              '    {\n'
+              '      "blockId": 201,\n'
+              '      "blocks": [\n'
+              '        {\n'
+              '          "id": 201,\n'
+              '          "text": "Root block"\n'
+              '        },\n'
+              '        {\n'
+              '          "id": 202,\n'
+              '          "text": "Child block and [Root block]",\n'
+              '          "links": [201]\n'
+              '        }\n'
+              '      ]\n'
+              '    }\n'
+              '  ]\n'
+              '}',
+        ),
+        ToolSectionMetadata(
+          title: 'Failure output',
+          body:
+              '{\n'
+              '  "success": false,\n'
+              '  "error": "childStartIndex and childEndIndex must be provided together."\n'
+              '}',
+        ),
+      ],
       examples: <ToolExample>[
         ToolExample(
-          description: 'Read the full tree for one block.',
+          description: 'Read the full tree for one or more root blocks.',
           command:
-              "orcanote get_blocks_text --repo my-repo --input '{\"blockIds\":[12345]}'",
+              "orcanote get_blocks_text --repo my-repo --input '{\"blockIds\":[201,202]}'",
         ),
         ToolExample(
           description: 'Read only a descendant slice for a block.',
           command:
-              "orcanote get_blocks_text --repo my-repo --input '{\"blockIds\":[12345],\"childStartIndex\":1,\"childEndIndex\":20}' --json",
+              "orcanote get_blocks_text --repo my-repo --input '{\"blockIds\":[201],\"childStartIndex\":1,\"childEndIndex\":20}' --json",
         ),
       ],
     ),

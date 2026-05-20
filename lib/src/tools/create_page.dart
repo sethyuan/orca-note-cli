@@ -10,7 +10,7 @@ OrcaToolCommand createCreatePageCommand(OrcaNoteCommandContext context) {
       title: 'Create Page',
       summary: 'Create a new page by alias name.',
       description:
-          'Creates a new aliased page in the repository. Optionally include the page in other pages by providing includeIn names.',
+          'Creates a new page alias. Provide only non-repoId fields inside --input. The page name is required and must not start with an underscore.',
       fields: <ToolFieldMetadata>[
         ToolFieldMetadata(
           name: 'repoId',
@@ -32,16 +32,48 @@ OrcaToolCommand createCreatePageCommand(OrcaNoteCommandContext context) {
         ),
       ],
       requiredFields: <String>['repoId', 'name'],
+      sections: <ToolSectionMetadata>[
+        ToolSectionMetadata(
+          title: 'Input shape',
+          body:
+              '{\n'
+              '  "name": "Project Roadmap",\n'
+              '  "includeIn": ["Projects", "Planning"]\n'
+              '}',
+        ),
+        ToolSectionMetadata(
+          title: 'Notes',
+          body:
+              '- name is required and must not start with _.\n'
+              '- includeIn is optional and lists page names to place into _is.',
+        ),
+        ToolSectionMetadata(
+          title: 'Success output',
+          body:
+              '{\n'
+              '  "success": true,\n'
+              '  "blockId": 123\n'
+              '}',
+        ),
+        ToolSectionMetadata(
+          title: 'Failure output',
+          body:
+              '{\n'
+              '  "success": false,\n'
+              '  "error": "Page name already exists (block 123)."\n'
+              '}',
+        ),
+      ],
       examples: <ToolExample>[
         ToolExample(
-          description: 'Create a plain page.',
+          description: 'Create a page alias.',
           command:
-              "orcanote create_page --repo my-repo --input '{\"name\":\"Roadmap\"}'",
+              "orcanote create_page --repo my-repo --input '{\"name\":\"Project Roadmap\"}'",
         ),
         ToolExample(
           description: 'Create a page and include it in two other pages.',
           command:
-              "orcanote create_page --repo my-repo --input '{\"name\":\"Roadmap\",\"includeIn\":[\"Projects\",\"Planning\"]}' --json",
+              "orcanote create_page --repo my-repo --input '{\"name\":\"Project Roadmap\",\"includeIn\":[\"Projects\",\"Planning\"]}' --json",
         ),
       ],
     ),

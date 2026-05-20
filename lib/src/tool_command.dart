@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
+import 'package:mcp_dart/mcp_dart.dart';
 
 import 'command_context.dart';
 import 'json_support.dart';
@@ -63,6 +64,15 @@ class OrcaToolCommand extends Command<int> {
       }
     }
 
+    if (metadata.sections.isNotEmpty) {
+      for (final section in metadata.sections) {
+        buffer
+          ..writeln()
+          ..writeln('${section.title}:')
+          ..writeln(section.body);
+      }
+    }
+
     if (metadata.examples.isNotEmpty) {
       buffer
         ..writeln()
@@ -84,66 +94,94 @@ class OrcaToolCommand extends Command<int> {
       return 0;
     }
 
-    final repoId = (argResults?['repo'] as String?)?.trim();
-    if (metadata.requiresRepo && (repoId == null || repoId.isEmpty)) {
-      throw UsageException('Missing required option --repo.', usage);
-    }
-    if (!metadata.requiresRepo && repoId != null && repoId.isNotEmpty) {
-      throw UsageException(
-        'Option --repo is not supported for this tool.',
-        usage,
+    try {
+      final repoId = (argResults?['repo'] as String?)?.trim();
+      if (metadata.requiresRepo && (repoId == null || repoId.isEmpty)) {
+        throw UsageException('Missing required option --repo.', usage);
+      }
+      if (!metadata.requiresRepo && repoId != null && repoId.isNotEmpty) {
+        throw UsageException(
+          'Option --repo is not supported for this tool.',
+          usage,
+        );
+      }
+
+      final arguments = parseJsonObject(argResults?['input'] as String?);
+
+      if (arguments.containsKey('repoId') && arguments['repoId'] != repoId) {
+        throw UsageException(
+          'Do not pass repoId inside --input; use --repo for the repository ID.',
+          usage,
+        );
+      }
+
+      final fullArguments = <String, dynamic>{...arguments};
+      if (metadata.requiresRepo) {
+        fullArguments['repoId'] = repoId;
+      }
+
+      final unknownFields = fullArguments.keys
+          .where((field) => !metadata.fieldNames.contains(field))
+          .toList(growable: false);
+      if (unknownFields.isNotEmpty) {
+        throw UsageException(
+          'Unknown input field(s): ${unknownFields.join(', ')}.',
+          usage,
+        );
+      }
+
+      final missingFields = metadata.requiredFields
+          .where((field) => !fullArguments.containsKey(field))
+          .toList(growable: false);
+      if (missingFields.isNotEmpty) {
+        throw UsageException(
+          'Missing required input field(s): ${missingFields.join(', ')}.',
+          usage,
+        );
+      }
+
+      final result = await context.mcpClient.callTool(
+        metadata.name,
+        fullArguments,
       );
+      final payload = decodeToolPayload(result);
+      final useJson = argResults?['json'] == true;
+      final rendered = useJson
+          ? OrcaNoteOutputFormatter.formatJson(payload)
+          : metadata.name == 'get_blocks_text'
+          ? OrcaNoteOutputFormatter.formatBlockText(payload)
+          : OrcaNoteOutputFormatter.formatText(payload);
+
+      final sink = result.isError == true ? stderr : stdout;
+      sink.writeln(rendered);
+
+      if (result.isError == true) {
+        stderr.writeln();
+        stderr.writeln(usage);
+        return 1;
+      }
+
+      return 0;
+    } on UsageException catch (error) {
+      stderr.writeln(error.message);
+      stderr.writeln();
+      stderr.writeln(usage);
+      return 64;
+    } on McpError catch (error) {
+      stderr.writeln(error);
+      stderr.writeln();
+      stderr.writeln(usage);
+      return 1;
+    } on FormatException catch (error) {
+      stderr.writeln(error.message);
+      stderr.writeln();
+      stderr.writeln(usage);
+      return 1;
+    } catch (error) {
+      stderr.writeln('Command failed: $error');
+      stderr.writeln();
+      stderr.writeln(usage);
+      return 1;
     }
-
-    final arguments = parseJsonObject(argResults?['input'] as String?);
-
-    if (arguments.containsKey('repoId') && arguments['repoId'] != repoId) {
-      throw UsageException(
-        'Do not pass repoId inside --input; use --repo for the repository ID.',
-        usage,
-      );
-    }
-
-    final fullArguments = <String, dynamic>{...arguments};
-    if (metadata.requiresRepo) {
-      fullArguments['repoId'] = repoId;
-    }
-
-    final unknownFields = fullArguments.keys
-        .where((field) => !metadata.fieldNames.contains(field))
-        .toList(growable: false);
-    if (unknownFields.isNotEmpty) {
-      throw UsageException(
-        'Unknown input field(s): ${unknownFields.join(', ')}.',
-        usage,
-      );
-    }
-
-    final missingFields = metadata.requiredFields
-        .where((field) => !fullArguments.containsKey(field))
-        .toList(growable: false);
-    if (missingFields.isNotEmpty) {
-      throw UsageException(
-        'Missing required input field(s): ${missingFields.join(', ')}.',
-        usage,
-      );
-    }
-
-    final result = await context.mcpClient.callTool(
-      metadata.name,
-      fullArguments,
-    );
-    final payload = decodeToolPayload(result);
-    final useJson = argResults?['json'] == true;
-    final rendered = useJson
-        ? OrcaNoteOutputFormatter.formatJson(payload)
-        : metadata.name == 'get_blocks_text'
-        ? OrcaNoteOutputFormatter.formatBlockText(payload)
-        : OrcaNoteOutputFormatter.formatText(payload);
-
-    final sink = result.isError == true ? stderr : stdout;
-    sink.writeln(rendered);
-
-    return result.isError == true ? 1 : 0;
   }
 }

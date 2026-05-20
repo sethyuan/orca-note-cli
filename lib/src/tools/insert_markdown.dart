@@ -10,7 +10,7 @@ OrcaToolCommand createInsertMarkdownCommand(OrcaNoteCommandContext context) {
       title: 'Insert Markdown Text',
       summary: 'Insert plain text or Markdown near a reference block.',
       description:
-          'Parses plain text or Markdown and inserts the resulting blocks into the repository relative to a reference block.',
+          'Inserts Markdown with optional tags and tag properties relative to a reference block. If position is omitted, the tool uses Orca Note\'s smart default insertion behavior.',
       fields: <ToolFieldMetadata>[
         ToolFieldMetadata(
           name: 'repoId',
@@ -26,7 +26,8 @@ OrcaToolCommand createInsertMarkdownCommand(OrcaNoteCommandContext context) {
         ),
         ToolFieldMetadata(
           name: 'position',
-          description: 'Optional insertion position relative to refBlockId.',
+          description:
+              'Optional insertion position: before, after, firstChild, or lastChild.',
           required: false,
         ),
         ToolFieldMetadata(
@@ -36,17 +37,62 @@ OrcaToolCommand createInsertMarkdownCommand(OrcaNoteCommandContext context) {
         ),
       ],
       requiredFields: <String>['repoId', 'refBlockId', 'text'],
+      sections: <ToolSectionMetadata>[
+        ToolSectionMetadata(
+          title: 'Input shape',
+          body:
+              '{\n'
+              '  "refBlockId": 401,\n'
+              '  "position": "lastChild",\n'
+              '  "text": "# Agenda #Meeting{\\"Location\\":\\"Room A\\"}\\n- Review status\\n- Plan next step"\n'
+              '}',
+        ),
+        ToolSectionMetadata(
+          title: 'Valid position values',
+          body:
+              '- before\n'
+              '- after\n'
+              '- firstChild\n'
+              '- lastChild',
+        ),
+        ToolSectionMetadata(
+          title: 'Notes',
+          body:
+              '- text is required.\n'
+              '- Tag syntax: #Tag Name or #Tag Name{"Property":"Value"} after the content, before the line break.\n'
+              '- Add tag properties by appending a single-line JSON object immediately after the tag name.\n'
+              '- Date property values must use Unix seconds.\n'
+              '- block-ref property values must be arrays of block IDs or alias strings; missing aliases are created automatically.',
+        ),
+        ToolSectionMetadata(
+          title: 'Success output',
+          body:
+              '{\n'
+              '  "success": true,\n'
+              '  "blockId": 1001,\n'
+              '  "insertedCount": 3\n'
+              '}',
+        ),
+        ToolSectionMetadata(
+          title: 'Failure output',
+          body:
+              '{\n'
+              '  "success": false,\n'
+              '  "error": "Reference block with ID 401 not found in repository my-repo"\n'
+              '}',
+        ),
+      ],
       examples: <ToolExample>[
         ToolExample(
-          description: 'Insert a short Markdown bullet list after a block.',
+          description: 'Insert Markdown with tags under a reference block.',
           command:
-              "orcanote insert_markdown --repo my-repo --input '{\"refBlockId\":12345,\"text\":\"- ship cli\\n- write docs\"}'",
+              "orcanote insert_markdown --repo my-repo --input '{\"refBlockId\":401,\"position\":\"lastChild\",\"text\":\"# Agenda #Meeting{\\\"Location\\\":\\\"Room A\\\"}\\n- Review status\\n- Plan next step\"}'",
         ),
         ToolExample(
           description:
-              'Insert Markdown before a reference block and keep JSON output.',
+              'Insert markdown relative to a block and keep JSON output.',
           command:
-              "orcanote insert_markdown --repo my-repo --input '{\"refBlockId\":12345,\"position\":\"before\",\"text\":\"# Release notes\"}' --json",
+              "orcanote insert_markdown --repo my-repo --input '{\"refBlockId\":401,\"position\":\"before\",\"text\":\"# Release notes\"}' --json",
         ),
       ],
     ),
