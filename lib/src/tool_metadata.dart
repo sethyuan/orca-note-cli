@@ -38,6 +38,12 @@ class ToolMetadata {
   final List<String> requiredFields;
   final List<ToolExample> examples;
 
+  bool get requiresRepo {
+    return fields.any(
+      (field) => field.name == 'repoId' && field.providedByRepoFlag,
+    );
+  }
+
   Set<String> get fieldNames {
     return fields.map((field) => field.name).toSet();
   }

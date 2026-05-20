@@ -29,7 +29,7 @@ if [[ ${#source_files[@]} -eq 0 ]]; then
 fi
 
 today_journal_id=$(
-  orcanote get_today_journal --repo demo-repo --json | jq -r '.blockId'
+  orcanote get_journal --repo demo-repo --json | jq -r '.blockId'
 )
 
 for file_path in "${source_files[@]}"; do

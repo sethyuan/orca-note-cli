@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 today_journal_id=$(
-  orcanote get_today_journal -r demo-repo --json | jq -r '.blockId'
+  orcanote get_journal -r demo-repo --json | jq -r '.blockId'
 )
 
 insert_input="{

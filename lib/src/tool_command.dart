@@ -39,7 +39,8 @@ class OrcaToolCommand extends Command<int> {
 
   @override
   String get invocation {
-    return "orcanote ${metadata.name} --repo <repoId> [--input '{...}'] [--json]";
+    final repoSegment = metadata.requiresRepo ? ' --repo <repoId>' : '';
+    return "orcanote ${metadata.name}$repoSegment [--input '{...}'] [--json]";
   }
 
   @override
@@ -84,8 +85,14 @@ class OrcaToolCommand extends Command<int> {
     }
 
     final repoId = (argResults?['repo'] as String?)?.trim();
-    if (repoId == null || repoId.isEmpty) {
+    if (metadata.requiresRepo && (repoId == null || repoId.isEmpty)) {
       throw UsageException('Missing required option --repo.', usage);
+    }
+    if (!metadata.requiresRepo && repoId != null && repoId.isNotEmpty) {
+      throw UsageException(
+        'Option --repo is not supported for this tool.',
+        usage,
+      );
     }
 
     final arguments = parseJsonObject(argResults?['input'] as String?);
@@ -97,7 +104,10 @@ class OrcaToolCommand extends Command<int> {
       );
     }
 
-    final fullArguments = <String, dynamic>{...arguments, 'repoId': repoId};
+    final fullArguments = <String, dynamic>{...arguments};
+    if (metadata.requiresRepo) {
+      fullArguments['repoId'] = repoId;
+    }
 
     final unknownFields = fullArguments.keys
         .where((field) => !metadata.fieldNames.contains(field))

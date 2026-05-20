@@ -28,7 +28,7 @@ On Windows the CLI falls back to `APPDATA\orcanote\config.json`.
 
 ## Usage
 
-Each MCP tool is exposed as its own subcommand:
+Repository-scoped tools use this form:
 
 ```sh
 orcanote <tool-name> --repo <repoId> --input '<json object>' [--json]
@@ -38,11 +38,18 @@ orcanote <tool-name> --repo <repoId> --input '<json object>' [--json]
 - `--input`: JSON object string with the rest of the tool arguments
 - `--json`: print the raw JSON payload instead of formatted text
 
+Date/time helper tools do not require `--repo`:
+
+```sh
+orcanote <tool-name> --input '<json object>' [--json]
+```
+
 Examples:
 
 ```sh
-orcanote get_today_journal --repo my-repo
+orcanote get_journal --repo my-repo
 orcanote get_blocks_text --repo my-repo --input '{"blockIds":[12345]}'
+orcanote parse_datetime --input '{"text":"next friday 9am"}'
 orcanote query_blocks --repo my-repo --input '{"description":{"q":{"kind":100,"conditions":[{"kind":8,"text":"deadline"}]}}}' --json
 ```
 
@@ -67,8 +74,10 @@ orcanote query_blocks --help
 - `get_page`
 - `get_blocks_structure`
 - `get_blocks_text`
-- `get_today_journal`
+- `get_journal`
+- `parse_datetime`
 - `query_blocks`
+- `shift_datetime`
 - `insert_markdown`
 - `move_blocks`
 - `create_page`
