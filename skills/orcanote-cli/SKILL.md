@@ -29,14 +29,13 @@ orcanote <tool_name> --help
 ## Default Workflow
 
 1. Discover IDs before writing when the target block, page, or tag is not already known.
-2. When a write depends on parent-child placement, inspect structure before mutating: use `get_blocks_structure` to confirm the direct parent and ordered children of the target blocks.
-3. Use batching whenever possible.
-4. Re-read after destructive changes if the user needs confirmation.
+2. Use batching whenever possible.
+3. Re-read after destructive changes if the user needs confirmation.
 
 ## Tool Selection
 
 - Inspect repository: `get_tags_and_pages`, `get_journal`, `query_blocks`
-- Read content: `get_blocks_text`, `get_blocks_structure`, `get_page`
+- Read content: `get_blocks_text`, `get_page`
 - Write content: `create_page`, `create_tags`, `insert_markdown`
 - Manage tags: `insert_tags`, `remove_tags`
 - Change structure: `move_blocks`, `delete_blocks`
