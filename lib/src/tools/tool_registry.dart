@@ -14,7 +14,6 @@ import 'move_blocks.dart';
 import 'parse_datetime.dart';
 import 'query_blocks.dart';
 import 'remove_tags.dart';
-import 'shift_datetime.dart';
 
 List<OrcaToolCommand> createToolCommands(OrcaNoteCommandContext context) {
   return <OrcaToolCommand>[
@@ -25,7 +24,6 @@ List<OrcaToolCommand> createToolCommands(OrcaNoteCommandContext context) {
     createGetJournalCommand(context),
     createParseDatetimeCommand(context),
     createQueryBlocksCommand(context),
-    createShiftDatetimeCommand(context),
     createInsertMarkdownCommand(context),
     createMoveBlocksCommand(context),
     createCreatePageCommand(context),

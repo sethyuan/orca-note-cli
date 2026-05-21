@@ -40,8 +40,8 @@ orcanote <tool_name> --help
 - Write content: `create_page`, `create_tags`, `insert_markdown`
 - Manage tags: `insert_tags`, `remove_tags`
 - Change structure: `move_blocks`, `delete_blocks`
-- Date/time manipulation: `parse_datetime`, `shift_datetime`
-- Use `parse_datetime` with `{"text":"now"}` when you need the current local date and time.
+- Date/time manipulation: `parse_datetime`
+- Use `parse_datetime` with `{"text":"now"}` when you need the current local date and time, and use `referenceTimestamp` for relative expressions like shifting a date/time from a known base.
 
 ## Writing Guidelines
 

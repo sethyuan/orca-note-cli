@@ -77,7 +77,6 @@ orcanote query_blocks --help
 - `get_journal`
 - `parse_datetime`
 - `query_blocks`
-- `shift_datetime`
 - `insert_markdown`
 - `move_blocks`
 - `create_page`
