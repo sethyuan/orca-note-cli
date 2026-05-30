@@ -13,22 +13,9 @@ Use this skill when the user wants to read, write, query, or manipulate an Orca 
 orcanote <tool_name> --repo <repoId> --input '<json object>' --json
 ```
 
-### Rules
-
-- Always use the `--json` flag to get structured output.
-- Single-quote the JSON string. If the payload contains embedded quotes or multiline markdown, build the JSON carefully before passing it to the command.
-
-### Tool Documentations
-
-When uncertain about how to use a tool, run its help command to get usage instructions and examples:
-
-```sh
-orcanote <tool_name> --help
-```
-
 ## Default Workflow
 
-1. Discover IDs before writing when the target block, page, or tag is not already known.
+1. Always call tool's help `orcanote help <tool_name>` to fully understand it before actually using it.
 2. Use batching whenever possible.
 3. Re-read after destructive changes if the user needs confirmation.
 
@@ -40,7 +27,7 @@ orcanote <tool_name> --help
 - Manage tags: `insert_tags`, `remove_tags`
 - Change structure: `move_blocks`, `delete_blocks`
 - Date/time manipulation: `parse_datetime`
-- Use `parse_datetime` with `{"text":"now"}` when you need the current local date and time, and use `referenceTimestamp` for relative expressions like shifting a date/time from a known base.
+- Use `parse_datetime` with `{"text":"now"}` when you need the current local date and time, and use `referenceTimestamp` for relative expressions like shifting a date/time from a known base. When calling `parse_datetime`, don't pass the `--repo` argument.
 
 ## Writing Guidelines
 
