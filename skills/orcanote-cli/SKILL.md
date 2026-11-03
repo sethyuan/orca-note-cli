@@ -28,7 +28,21 @@ orcanote <tool_name> --repo <repoId> --input '<json object>' --json
 - Change structure: `move_blocks`, `delete_blocks`
 - Date/time manipulation: `parse_datetime`
 - Repository sync: `s3_sync`
+- App UI level operations: `invoke_commands`
 - Use `parse_datetime` with `{"text":"now"}` when you need the current local date and time, and use `referenceTimestamp` for relative expressions like shifting a date/time from a known base. When calling `parse_datetime`, don't pass the `--repo` argument.
+
+## App UI Commands
+
+The content tools cannot change a block's type, toggle a task, delete a block by ID, set block properties, manage aliases or references, or drive the app UI. Use `invoke_commands` for that: it runs app commands inside the window of an already open repository and reports a status for every command.
+
+```sh
+orcanote invoke_commands --repo <repoId> --input '{"commands":[{"id":"<command ID>","args":[1234]},{"id":"<command ID>"}]}'
+```
+
+## Troubleshooting
+
+- `HTTP 502` or a connection error while Orca Note is running: a proxy in the environment (`HTTP_PROXY`, `HTTPS_PROXY`, `ALL_PROXY`) can hijack the call to the local MCP server. Unset them, or set `NO_PROXY=localhost`; the CLI forces a direct connection for loopback addresses, so also check that you are running a current build.
+- `Tool <name> not found`: the running Orca Note app is older than the CLI; update the app.
 
 ## Writing Guidelines
 

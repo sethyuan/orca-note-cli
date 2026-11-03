@@ -51,6 +51,7 @@ orcanote get_journal --repo my-repo
 orcanote get_blocks_text --repo my-repo --input '{"blockIds":[12345]}'
 orcanote parse_datetime --input '{"text":"next friday 9am"}'
 orcanote query_blocks --repo my-repo --input '{"description":{"q":{"kind":100,"conditions":[{"kind":8,"text":"deadline"}]}}}' --json
+orcanote invoke_commands --repo my-repo --input '{"commands":[{"id":"core.editor.toggleTaskState","args":[1235]}]}'
 ```
 
 ## Help
@@ -83,6 +84,8 @@ orcanote query_blocks --help
 - `insert_tags`
 - `remove_tags`
 - `create_tags`
+- `s3_sync`
+- `invoke_commands`
 
 ## Orca Note
 

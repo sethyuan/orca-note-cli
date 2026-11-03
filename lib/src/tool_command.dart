@@ -87,6 +87,26 @@ class OrcaToolCommand extends Command<int> {
     return buffer.toString().trimRight();
   }
 
+  /// Hook for tools that need to reshape or pre-validate the `--input` object
+  /// before the generic field checks run. The returned map is what gets sent to
+  /// the MCP tool, so throw a [UsageException] when the input is invalid.
+  Map<String, dynamic> normalizeArguments(Map<String, dynamic> arguments) {
+    return arguments;
+  }
+
+  /// Hook for tools that need their own human readable rendering. Only used when
+  /// `--json` is not passed; `--json` always prints the raw payload.
+  String renderText(Object? payload) {
+    return metadata.name == 'get_blocks_text'
+        ? OrcaNoteOutputFormatter.formatBlockText(payload)
+        : OrcaNoteOutputFormatter.formatText(payload);
+  }
+
+  /// Hook for tools whose failure cannot be read from `isError` alone.
+  int exitCodeFor({required Object? payload, required bool isError}) {
+    return isError ? 1 : 0;
+  }
+
   @override
   Future<int> run() async {
     if (argResults?['help'] == true) {
@@ -106,7 +126,9 @@ class OrcaToolCommand extends Command<int> {
         );
       }
 
-      final arguments = parseJsonObject(argResults?['input'] as String?);
+      final arguments = normalizeArguments(
+        parseJsonObject(argResults?['input'] as String?),
+      );
 
       if (arguments.containsKey('repoId') && arguments['repoId'] != repoId) {
         throw UsageException(
@@ -148,24 +170,22 @@ class OrcaToolCommand extends Command<int> {
       final useJson = argResults?['json'] == true;
       final rendered = useJson
           ? OrcaNoteOutputFormatter.formatJson(payload)
-          : metadata.name == 'get_blocks_text'
-          ? OrcaNoteOutputFormatter.formatBlockText(payload)
-          : OrcaNoteOutputFormatter.formatText(payload);
+          : renderText(payload);
 
-      final sink = result.isError == true ? stderr : stdout;
+      final isError = result.isError == true;
+      final sink = isError ? stderr : stdout;
       sink.writeln(rendered);
 
-      if (result.isError == true) {
+      if (isError) {
         stderr.writeln();
         stderr.writeln(usage);
-        return 1;
       }
 
-      return 0;
+      return exitCodeFor(payload: payload, isError: isError);
     } on UsageException catch (error) {
       stderr.writeln(error.message);
       stderr.writeln();
-      stderr.writeln(usage);
+      stderr.writeln(error.usage);
       return 64;
     } on McpError catch (error) {
       stderr.writeln(error);

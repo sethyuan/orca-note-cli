@@ -9,6 +9,7 @@ import 'get_page.dart';
 import 'get_tags_and_pages.dart';
 import 'insert_markdown.dart';
 import 'insert_tags.dart';
+import 'invoke_commands.dart';
 import 'move_blocks.dart';
 import 'parse_datetime.dart';
 import 'query_blocks.dart';
@@ -31,5 +32,6 @@ List<OrcaToolCommand> createToolCommands(OrcaNoteCommandContext context) {
     createRemoveTagsCommand(context),
     createCreateTagsCommand(context),
     createS3SyncCommand(context),
+    createInvokeCommandsCommand(context),
   ];
 }
