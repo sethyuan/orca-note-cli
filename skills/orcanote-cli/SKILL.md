@@ -39,6 +39,42 @@ The content tools cannot change a block's type, toggle a task, delete a block by
 orcanote invoke_commands --repo <repoId> --input '{"commands":[{"id":"<command ID>","args":[1234]},{"id":"<command ID>"}]}'
 ```
 
+### Command Reference
+
+Every `core.*` command ID, its arguments and a usage example are documented in two reference
+files next to this `SKILL.md`. Read them on demand — never load them wholesale:
+
+- `Core-Commands.md` (253 lines, 42 commands) — commands that act on the app rather than inside an
+  editor: `core.global.*`, theme/UI, sidebar, panel management, navigation (`core.open*`,
+  `core.go*`), application, clipboard, assets, index, S3 sync, layout, preview. Small enough to
+  read in full.
+- `Core-Editor-Commands.md` (2549 lines, ~85 KB, 175 commands) — everything that manipulates
+  blocks or text, plus a few helpers outside that namespace (`core.duplicateTag`,
+  `core.ai.openChatAside`). Far too large to read whole; search it for the exact ID instead:
+
+  ```sh
+  grep -n -A16 '### `core.editor.collapseEmptyBlock`' /Users/sethyuan/dev/orca-note-cli/skills/orcanote-cli/Core-Editor-Commands.md
+  ```
+
+The split is by command kind, not strictly by ID prefix: `core.editor.copySelection` and
+`core.editor.copySelectionForMove` are plain (non-editor) commands and live in `Core-Commands.md`.
+`orcanote help invoke_commands` still owns the tool contract — input shape, limits, `panelId` /
+`undoable` / `focus`, status and error codes.
+
+Turning a doc entry into an `invoke_commands` item:
+
+1. The doc's **Parameters** list is the order of `args`. The `cursor` argument in its examples is
+   injected by the app and has no `args` counterpart — drop it. `core.editor.collapseEmptyBlock`
+   (`blockId: DbId`, `mode: "promote" | "absorb"`) therefore becomes
+   `{"id":"core.editor.collapseEmptyBlock","args":[123,"promote"]}`.
+2. Prefer an explicit block id over `focus: true`: it works without stealing the user's focus,
+   whereas a no-arg editor command is otherwise skipped with `editor_not_focused`.
+3. The docs describe the in-app JavaScript API, so examples pass `Block` objects and `Date`s;
+   `args` is plain JSON, so pass block ids and ISO strings for dates. Commands that truly need a
+   `Block` snapshot and are useless through `invoke_commands`: `core.editor.insertBlock`,
+   `batchInsertText`, `batchInsertReprs`, `batchInsertHTML` — use `insert_markdown` /
+   `create_page` instead.
+
 ## Troubleshooting
 
 - `HTTP 502` or a connection error while Orca Note is running: a proxy in the environment (`HTTP_PROXY`, `HTTPS_PROXY`, `ALL_PROXY`) can hijack the call to the local MCP server. Unset them, or set `NO_PROXY=localhost`; the CLI forces a direct connection for loopback addresses, so also check that you are running a current build.

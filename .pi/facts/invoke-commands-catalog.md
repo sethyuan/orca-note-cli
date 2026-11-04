@@ -145,11 +145,16 @@ All `core.editor.format*` (`formatBold`, `formatItalic`, `formatInlineCode`, `fo
 families, they only mutate the clipboard, and `export.*` opens an export window).
 
 ### Deliberately NOT recommended
-`core.editor.insertBlock`, `batchInsertText`, `batchInsertHTML`, `batchInsertReprs`,
-`copyBlocks`, `moveBlocks`, `crossRepoCopyBlocks` — they take a **`Block` object**
-(`{id, parent, left, children}`), i.e. a snapshot of `orca.state.blocks[id]`; passing a bare id
-silently does nothing useful. The CLI tools `insert_markdown` / `move_blocks` / `create_page`
-already do these jobs properly.
+`core.editor.insertBlock`, `batchInsertText`, `batchInsertHTML`, `batchInsertReprs` — they take a
+**`Block` object** (`{id, parent, left, children}`), i.e. a snapshot of `orca.state.blocks[id]`;
+passing a bare id silently does nothing useful. Use `insert_markdown` / `create_page` instead.
+
+`copyBlocks` / `moveBlocks` / `crossRepoCopyBlocks` are **not** in that group: per the registry
+signatures in section 4 they take `blockIds: DbId[]` + `refBlockId: DbId | null` + `position`, so
+plain ids work. Still prefer the CLI tools `insert_markdown` / `move_blocks` (higher level, no
+window focus involved). **Corrected 2026-11-04:** an earlier version of this bullet wrongly listed
+those three copy/move commands as `Block`-object commands; the section 4 signatures and the
+updated upstream docs agree they take ids.
 
 ## 3. Regeneration recipe (run inside `/Users/sethyuan/dev/orca-note`)
 
@@ -409,10 +414,38 @@ The table below was produced with a one-off Python pass doing exactly that.
   (native `args` array or JSON-array string both accepted, native array is re-encoded to the
   JSON string the MCP schema requires; local checks for 20 items / 20000 chars per args /
   256KB payload / types), `renderInvokeCommandsText`, `invokeCommandsExitCode`.
-- **Boss decision:** the command catalogue is NOT shipped anywhere the caller can read it.
-  No command list and no arg signatures in `SKILL.md` (only an example), none in `--help`.
-  This section 2 catalogue and the dump in section 4 stay in this internal fact file only;
-  do not copy them into docs or link them from docs.
+- **Command reference policy — CURRENT (supersedes the earlier decision below):** the command
+  ID / argument / usage-example reference now ships **with the skill**:
+  `skills/orcanote-cli/Core-Commands.md` (253 lines, 42 app-level `core.*` commands) and
+  `skills/orcanote-cli/Core-Editor-Commands.md` (2549 lines, ~85 KB, 175 commands — block/text
+  manipulation plus `core.duplicateTag` and `core.ai.openChatAside`). Together they cover 218 of
+  the 219 ids in section 4; only `core.ai.batchInsert` / `core.ai.batchInsertText` are missing.
+  `SKILL.md` points at them for on-demand lookup (relative to the skill directory; the big one is
+  searched, never read whole) and carries the doc→`invoke_commands` translation rules.
+  Consequences: no command table is inlined in `SKILL.md`, and `--help` is unchanged —
+  `orcanote help invoke_commands` still owns the tool contract (payload, limits, focus gate,
+  status/error codes).
+  **Do not edit these two files' content, with one standing exception (see next bullet).**
+- **Regeneration caveat — re-check 2 lines after every upstream refresh:** both files are generated
+  from the upstream Orca API docs (VitePress), whose page slugs contain **spaces**, so a fresh
+  regeneration re-creates two dead cross-links that we fix by hand each time:
+  - `Core-Commands.md` line ~7: `[Core Editor Commands](./Core%20Editor%20Commands.md)` →
+    `[Core Editor Commands](./Core-Editor-Commands.md)`
+  - `Core-Editor-Commands.md` line ~5: `[Core Commands](./Core%20Commands.md)` →
+    `[Core Commands](./Core-Commands.md)`
+  Only the hrefs are changed (link text and body stay byte-identical). This is also why the repo
+  files must keep **hyphenated** names (`Core-Commands.md`), not the upstream space-separated
+  slugs: `SKILL.md` references and the `grep` example must stay copy-pasteable. Verify with
+  `grep -n 'Core%20' skills/orcanote-cli/*.md` → must return nothing.
+  Refresh the counts in the `### Command Reference` section of `SKILL.md` too when they drift.
+- ~~**Boss decision (SUPERSEDED, kept for history):** the command catalogue is NOT shipped
+  anywhere the caller can read it. No command list and no arg signatures in `SKILL.md` (only an
+  example), none in `--help`. This section 2 catalogue and the dump in section 4 stay in this
+  internal fact file only; do not copy them into docs or link them from docs.~~ Superseded by
+  the boss's 2026-11-04 request to reference the two upstream command docs from `SKILL.md`.
+  Section 2 / section 4 below still stay internal: they are curated **CLI-side** notes (focus
+  gate, "no caret" args, not-recommended ids, full registry dump) and are not copied into
+  `SKILL.md` or `--help`.
 - Exit codes: `0` only when the desktop payload says `success: true` (so a skipped command
   exits `1`); `64` for locally rejected input; `1` for tool/window errors.
 - Verification status: `dart analyze` clean; local validation + rendering exercised with a
