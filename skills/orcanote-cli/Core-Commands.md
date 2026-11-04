@@ -251,3 +251,48 @@ Additional layout commands are dynamically registered based on saved layouts in 
 - `core.enableInteractivePreview`
   - Description: Enables interactive preview mode
   - Parameters: None
+
+### AI Commands
+
+These commands are meant for AI agents (the in-app assistant's `call_commands` tool and the MCP `invoke_commands` tool). They take arguments, so they are not listed in the command palette, and they can return data to the caller.
+
+- `core.ai.getBlocks`
+  - Description: Reads blocks and returns a JSON view of them. It is a read-only wrapper around the `get-blocks` backend call: nothing is stored in the editor's state and no undo step is created.
+  - Parameters:
+    - `blockIds`: number | number[] (required) - The blocks to read.
+    - `opts`: object (optional)
+      - `maxBlocks`: number (default: 500, at most: 1000) - How many block IDs are read per call.
+      - `includeContent`: boolean (default: false) - Also return the raw content fragments (debugging aid; far more verbose).
+  - Returns:
+    ```json
+    {
+      "success": true,
+      "count": 1,
+      "blocks": [
+        {
+          "id": 1000,
+          "type": "heading",
+          "text": "Title",
+          "parent": 999,
+          "children": [1001],
+          "aliases": ["/pages/title"],
+          "tags": ["Project"],
+          "links": [1002],
+          "properties": {
+            "Status": "done",
+            "_repr": { "type": "heading", "level": 2 }
+          }
+        }
+      ],
+      "missingIds": [123],
+      "truncated": false
+    }
+    ```
+  - Notes:
+    - `properties` keeps `_repr` (the block's type and its type-specific fields). Values stay structured (`Date` → ISO string).
+    - Empty fields are omitted, so `text`, `children`, `aliases`, `tags`, `links` and `properties` only appear when the block has them.
+    - `text` is the block's own text plus its tag property values; a property that points at a block contributes the **target block ID**.
+    - `links` are the targets of inline references.
+    - `missingIds` lists requested IDs that have no block, `truncated` is set when the input was cut to `maxBlocks`.
+    - Invalid input is answered with `{ "success": false, "error": "…" }` instead of a failed command.
+    - Only `block` and `journal` panels have an editor, so run it in one of those (otherwise the caller gets `skipped` / `panel_has_no_editor`).
